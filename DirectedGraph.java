@@ -62,47 +62,53 @@ public class DirectedGraph {
 
 	/**
 	 * Breadth first search to get the number of trips with a 
-	 * certain start and end point not exceeding the given max
-	 * number of stops
+	 * certain start and end point either not exceeding the
+	 * max stops or exactly the number max stops
 	 * 
 	 * @param start
 	 * @param end
 	 * @param max
+	 * @param less	true for finding valid trips less than 
+	 * the number of max stops, false for exactly max
 	 * @return
 	 */
-	public int getTrips(char start, char end, int max) {
+	public int getTrips(char start, char end, int max, boolean less) {
 		int startIndex = nodes.indexOf(start);
 		int trips = 0;
 
-		// Create new paths for each adjacent node
+		// Explore neighbours (so we don't get the first node returning true
 		for (int i = 0; i < adjMat[startIndex].length; i++) {
 			if (adjMat[startIndex][i] > 0) {
-				trips += getTripsRecursive(nodes.get(i), end, max - 1);
+				trips += getTripsRecursive(nodes.get(i), end, max - 1, less);
 			}
 		}
 
 		return trips;
 	}
 
-	public int getTripsRecursive(char start, char end, int max) {
+	public int getTripsRecursive(char start, char end, int max, boolean less) {
 		int startIndex = nodes.indexOf(start);
-		int isValid = 0;
+		int trips = 0;
 
 		// Base case
-		if (start == end && max >= 0) {
-			isValid = 1;
+		if (start == end) {
+			if (less && max >= 0) {
+				trips++;
+			} else if (max == 0) {
+				trips++;
+			}
 		}
+
 		
 		// Recursive case
 		if (max > 0) {
-			for (int i = 0; i < adjMat[startIndex].length; i++) {
+			for (int i = 0; i < adjMat[startIndex].length;i++) {
 				if (adjMat[startIndex][i] > 0) {
-					return isValid + getTripsRecursive(nodes.get(i), end, max - 1);
-		
+					trips += getTripsRecursive(nodes.get(i), end, max - 1, less);
 				}
 			}
 		}
-		return isValid;
+		return trips;
 	}
 
 
