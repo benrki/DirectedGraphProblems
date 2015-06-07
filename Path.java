@@ -30,14 +30,10 @@ public class Path {
 		return lastNode;
 	}
 
-	public boolean visit(int node, int length) {
-		if (!visited.contains(node)) {
-			visited.add(node);
-			lastNode = node;
-			this.length += length;
-			return true;
-		}
-		return false;
+	public void visit(int node, int length) {
+		visited.add(node);
+		lastNode = node;
+		this.length += length;
 	}
 
 	public int getStops() {
@@ -45,18 +41,29 @@ public class Path {
 	}
 
 	/**
-	 * Gets all neighbours that haven't been visited yet
-	 * @param adjMat
-	 * @return
+	 * Gets all neighbours
+	 * 
+	 * @param adjMat	adjacency matrix of directed graph
+	 * @param includeVisited	whether to include neighbours that have
+	 * been visited
+	 * @return	ArrayList of Path objects
 	 */
-	public ArrayList<Path> getNeighbours(int[][] adjMat) {
+	public ArrayList<Path> getNeighbours(int[][] adjMat, boolean includeVisited) {
 		ArrayList<Path> neighbours = new ArrayList<Path>();
 
 		for (int i = 0; i < adjMat[this.lastNode].length; i++) {
-			if (adjMat[this.lastNode][i] > 0 && !visited.contains(i)) {
-				Path neighbour = new Path(this);
-				neighbour.visit(i, adjMat[this.lastNode][i]);
-				neighbours.add(neighbour);
+			if (adjMat[this.lastNode][i] > 0) {
+				if (includeVisited) {
+					Path neighbour = new Path(this);
+					neighbour.visit(i, adjMat[this.lastNode][i]);
+					neighbours.add(neighbour);
+				} else {
+					if (!visited.contains(i)) {
+						Path neighbour = new Path(this);
+						neighbour.visit(i, adjMat[this.lastNode][i]);
+						neighbours.add(neighbour);
+					}
+				}
 			}
 		}
 

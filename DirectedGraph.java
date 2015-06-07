@@ -91,7 +91,7 @@ public class DirectedGraph {
 		PriorityQueue<Path> toVisit = new PriorityQueue<Path>(QUEUE_INIT, pathComparator);
 		
 		// Populate toVisit with each neighbour so paths to itself do not give 0
-		toVisit.addAll(p.getNeighbours(adjMat));
+		toVisit.addAll(p.getNeighbours(adjMat, false));
 		
 		while(!toVisit.isEmpty() && toVisit.peek().getLength() < shortest) {
 			Path next = toVisit.poll();
@@ -101,12 +101,22 @@ public class DirectedGraph {
 			}
 			
 			// Add all neighbours and loop
-			toVisit.addAll(next.getNeighbours(adjMat));
+			toVisit.addAll(next.getNeighbours(adjMat, false));
 		}
 		
 		return shortest;
 	}
 	
+	/**
+	 * Djikstra's algorithm implementation of finding
+	 * the number of routes between two nodes under a 
+	 * given distance.
+	 * 
+	 * @param start	start node (can be same as end)
+	 * @param end	end node
+	 * @param distance	distance to be limited under
+	 * @return	the number of routes
+	 */
 	public int getNumRoutes(char start, char end, int distance) {
 		Path p = new Path(nodes.indexOf(start));
 		int endIndex = nodes.indexOf(end);
@@ -114,8 +124,9 @@ public class DirectedGraph {
 		PriorityQueue<Path> toVisit = new PriorityQueue<Path>(QUEUE_INIT, pathComparator);
 		int numRoutes = 0;
 		
-		//toVisit.addAll(p.getNeighbours(adjMat));
-		toVisit.add(p);
+		// Add all neighbours to toVisit instead of just p
+		// to avoid a false positive on the initial poll of itself
+		toVisit.addAll(p.getNeighbours(adjMat, true));
 		
 		while(!toVisit.isEmpty() && toVisit.peek().getLength() < distance) {
 			Path next = toVisit.poll();
@@ -125,7 +136,7 @@ public class DirectedGraph {
 			}
 			
 			// Add all neighbours and loop
-			toVisit.addAll(next.getNeighbours(adjMat));
+			toVisit.addAll(next.getNeighbours(adjMat, true));
 		}
 		
 		return numRoutes;
