@@ -78,9 +78,12 @@ public class DirectedGraphTest {
 	public void testNumRoutes() {
 		DirectedGraph d1 = new DirectedGraph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7");
 		
-		System.out.println("TEST " + d1.getNumRoutes('C', 'C', 30));
-		
 		assertTrue(d1.getNumRoutes('C', 'C', 30) == 7);
+		assertTrue(d1.getNumRoutes('C', 'C', 20) == 3);
+		assertTrue(d1.getNumRoutes('C', 'C', 10) == 1);
+		assertTrue(d1.getNumRoutes('D', 'E', 7) == 1);
+		assertTrue(d1.getNumRoutes('A', 'C', 30) == 11);
+
 	}
 	
 
