@@ -62,6 +62,26 @@ public class DirectedGraphTest {
 		
 	}
 	
+	@Test
+	public void testGetShortest() {
+		DirectedGraph d1 = new DirectedGraph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7");
+		
+		assertTrue(d1.getShortestRoute('A', 'C') == 9);
+		assertTrue(d1.getShortestRoute('B', 'B') == 9);
+		assertTrue(d1.getShortestRoute('C', 'C') == 9);
+		assertTrue(d1.getShortestRoute('C', 'E') == 2);
+		assertTrue(d1.getShortestRoute('A', 'B') == 5);
+		assertTrue(d1.getShortestRoute('B', 'D') == 12);
+	}
+	
+	@Test
+	public void testNumRoutes() {
+		DirectedGraph d1 = new DirectedGraph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7");
+		
+		System.out.println("TEST " + d1.getNumRoutes('C', 'C', 30));
+		
+		assertTrue(d1.getNumRoutes('C', 'C', 30) == 7);
+	}
 	
 
 }
