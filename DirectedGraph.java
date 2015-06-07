@@ -1,8 +1,11 @@
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 
 /**
  * Various directed graph problems.
  * 07/06/15
+ * 
  * 
  * @author Benjamin Ki
  *
@@ -10,6 +13,12 @@ import java.util.ArrayList;
 public class DirectedGraph {
 	private int[][] adjMat = null;
 	private ArrayList<Character> nodes = new ArrayList<Character>();
+	// Arbitrarily high number representing infinity
+	// Required for Djikstra's algorithm
+	private static final int INFINITY = 99999;
+	// PriorityQueues require a default initial capacity
+	// when using comparators
+	private static final int QUEUE_INIT = 11; 
 
 	public DirectedGraph(String input) {
 		String[] inputArray = input.split(", ");
@@ -41,6 +50,12 @@ public class DirectedGraph {
 
 	}
 
+	/**
+	 * Gets the total distance of a given path
+	 * 
+	 * @param path	input string separated by hyphens
+	 * @return the distance as an integer
+	 */
 	public int getDistance(String path) {
 		String[] pathArray = path.split("-");
 		int distance = 0;
@@ -58,19 +73,75 @@ public class DirectedGraph {
 
 		return distance;
 	}
-
+	
+	/**
+	 * Djikstra's algorithm implementation to find 
+	 * the length of the shortest path between
+	 * two nodes
+	 * 
+	 * @param p	the start point
+	 * @param end	the end point
+	 * @return	the length of the shortest route
+	 */
+	public int getShortestRoute(char start, char end) {
+		Path p = new Path(nodes.indexOf(start));
+		int endIndex = nodes.indexOf(end);
+		int shortest = INFINITY;
+		Comparator<Path> pathComparator = new NodeDistanceComparator();
+		PriorityQueue<Path> toVisit = new PriorityQueue<Path>(QUEUE_INIT, pathComparator);
+		
+		// Populate toVisit with each neighbour so paths to itself do not give 0
+		toVisit.addAll(p.getNeighbours(adjMat));
+		
+		while(!toVisit.isEmpty() && toVisit.peek().getLength() < shortest) {
+			Path next = toVisit.poll();
+			
+			if (next.getLastNode() == endIndex) {
+				shortest = next.getLength();
+			}
+			
+			// Add all neighbours and loop
+			toVisit.addAll(next.getNeighbours(adjMat));
+		}
+		
+		return shortest;
+	}
+	
+	public int getNumRoutes(char start, char end, int distance) {
+		Path p = new Path(nodes.indexOf(start));
+		int endIndex = nodes.indexOf(end);
+		Comparator<Path> pathComparator = new NodeDistanceComparator();
+		PriorityQueue<Path> toVisit = new PriorityQueue<Path>(QUEUE_INIT, pathComparator);
+		int numRoutes = 0;
+		
+		//toVisit.addAll(p.getNeighbours(adjMat));
+		toVisit.add(p);
+		
+		while(!toVisit.isEmpty() && toVisit.peek().getLength() < distance) {
+			Path next = toVisit.poll();
+			
+			if (next.getLastNode() == endIndex) {
+				numRoutes++;
+			}
+			
+			// Add all neighbours and loop
+			toVisit.addAll(next.getNeighbours(adjMat));
+		}
+		
+		return numRoutes;
+	}
 
 	/**
 	 * Breadth first search to get the number of trips with a 
 	 * certain start and end point either not exceeding the
 	 * max stops or exactly the number max stops
 	 * 
-	 * @param start
-	 * @param end
-	 * @param max
+	 * @param start	start point of our trips
+	 * @param end	end point of our trips
+	 * @param max	maximum stops of our trips
 	 * @param less	true for finding valid trips less than 
 	 * the number of max stops, false for exactly max
-	 * @return
+	 * @return	the number of trips possible
 	 */
 	public int getTrips(char start, char end, int max, boolean less) {
 		int startIndex = nodes.indexOf(start);
@@ -86,6 +157,10 @@ public class DirectedGraph {
 		return trips;
 	}
 
+	/**
+	 * Recursive helper function for getTrips
+	 * 
+	 */
 	public int getTripsRecursive(char start, char end, int max, boolean less) {
 		int startIndex = nodes.indexOf(start);
 		int trips = 0;
