@@ -21,50 +21,52 @@ public class DirectedGraph {
 	// PriorityQueues require a default initial capacity
 	// when using comparators
 	private static final int QUEUE_INIT = 11;
-	
+
 	public static void main(String[] args) throws IOException {
 		Scanner inputScanner = new Scanner(System.in);
 		String line = null;
+
+		System.out.println("Please enter a space separated list of vertices/edges.");
 		
 		// Read input
 		while(!(line = inputScanner.nextLine()).isEmpty()) {
-		  DirectedGraph dg = new DirectedGraph(line);
-		  
-		  // Run questions
-		  System.out.println("1. The distance of the route A-B-C.");
-		  System.out.println(dg.getDistance("A-B-C"));
-		  
-		  System.out.println("2. The distance of the route A-D.");
-		  System.out.println(dg.getDistance("A-D"));
-		  
-		  System.out.println("3. The distance of the route A-D-C.");
-		  System.out.println(dg.getDistance("A-D-C"));
-		  
-		  System.out.println("4. The distance of the route A-E-B-C-D.");
-		  System.out.println(dg.getDistance("A-E-B-C-D"));
-		  
-		  System.out.println("5. The distance of the route A-E-D.");
-		  System.out.println(dg.getDistance("A-E-D"));
-		  
-		  System.out.println("6. The number of trips starting at C and ending at C with a maximum of 3 stops.");
-		  System.out.println(dg.getTrips('C', 'C', 3, true));
-		  
-		  System.out.println("7. The number of trips starting	 at A and ending at C with exactly 4 stops.");
-		  System.out.println(dg.getTrips('A', 'C', 3, false));
-		  
-		  System.out.println("8. The length of the shortest route (in terms of distance to travel) from A to C.");
-		  System.out.println(dg.getShortestRoute('A', 'C'));
-		  
-		  System.out.println("9. The length of the shortest route (in terms of distance to travel) from B to B.");
-		  System.out.println(dg.getShortestRoute('B', 'B'));
-		  
-		  System.out.println("10. The number of different routes from C to C with a distance of less than 30.");
-		  System.out.println(dg.getNumRoutes('C', 'C', 30));
-		  
+			if (line.matches("[A-z]{2}[0-9]+.*")) {
+				DirectedGraph dg = new DirectedGraph(line);
+	
+				// Run questions
+				System.out.println("Q1. The distance of the route A-B-C.");
+				System.out.println("A: " + dg.getDistance("A-B-C"));
+	
+				System.out.println("Q2. The distance of the route A-D.");
+				System.out.println("A: " + dg.getDistance("A-D"));
+	
+				System.out.println("Q3. The distance of the route A-D-C.");
+				System.out.println("A: " + dg.getDistance("A-D-C"));
+	
+				System.out.println("Q4. The distance of the route A-E-B-C-D.");
+				System.out.println("A: " + dg.getDistance("A-E-B-C-D"));
+	
+				System.out.println("Q5. The distance of the route A-E-D.");
+				System.out.println("A: " + dg.getDistance("A-E-D"));
+	
+				System.out.println("Q6. The number of trips starting at C and ending at C with a maximum of 3 stops.");
+				System.out.println("A: " + dg.getTrips('C', 'C', 3, true));
+	
+				System.out.println("Q7. The number of trips starting	 at A and ending at C with exactly 4 stops.");
+				System.out.println("A: " + dg.getTrips('A', 'C', 3, false));
+	
+				System.out.println("Q8. The length of the shortest route (in terms of distance to travel) from A to C.");
+				System.out.println("A: " + dg.getShortestRoute('A', 'C'));
+	
+				System.out.println("Q9. The length of the shortest route (in terms of distance to travel) from B to B.");
+				System.out.println("A: " + dg.getShortestRoute('B', 'B'));
+	
+				System.out.println("Q10. The number of different routes from C to C with a distance of less than 30.");
+				System.out.println("A: " + dg.getNumRoutes('C', 'C', 30));
+			}
+			System.out.println("\nPlease enter a space separated list of vertices/edges.");
 		}
 		inputScanner.close();
-		
-		
 	}
 
 	public DirectedGraph(String input) {
@@ -121,7 +123,7 @@ public class DirectedGraph {
 
 		return distance;
 	}
-	
+
 	/**
 	 * Djikstra's algorithm implementation to find 
 	 * the length of the shortest path between
@@ -137,24 +139,24 @@ public class DirectedGraph {
 		int shortest = INFINITY;
 		Comparator<Path> pathComparator = new NodeDistanceComparator();
 		PriorityQueue<Path> toVisit = new PriorityQueue<Path>(QUEUE_INIT, pathComparator);
-		
+
 		// Populate toVisit with each neighbour so paths to itself do not give 0
 		toVisit.addAll(p.getNeighbours(adjMat, false));
-		
+
 		while(!toVisit.isEmpty() && toVisit.peek().getLength() < shortest) {
 			Path next = toVisit.poll();
-			
+
 			if (next.getLastNode() == endIndex) {
 				shortest = next.getLength();
 			}
-			
+
 			// Add all neighbours and loop
 			toVisit.addAll(next.getNeighbours(adjMat, false));
 		}
-		
+
 		return shortest;
 	}
-	
+
 	/**
 	 * Djikstra's algorithm implementation of finding
 	 * the number of routes between two nodes under a 
@@ -171,22 +173,22 @@ public class DirectedGraph {
 		Comparator<Path> pathComparator = new NodeDistanceComparator();
 		PriorityQueue<Path> toVisit = new PriorityQueue<Path>(QUEUE_INIT, pathComparator);
 		int numRoutes = 0;
-		
+
 		// Add all neighbours to toVisit instead of just p
 		// to avoid a false positive on the initial poll of itself
 		toVisit.addAll(p.getNeighbours(adjMat, true));
-		
+
 		while(!toVisit.isEmpty() && toVisit.peek().getLength() < distance) {
 			Path next = toVisit.poll();
-			
+
 			if (next.getLastNode() == endIndex) {
 				numRoutes++;
 			}
-			
+
 			// Add all neighbours and loop
 			toVisit.addAll(next.getNeighbours(adjMat, true));
 		}
-		
+
 		return numRoutes;
 	}
 
@@ -233,7 +235,7 @@ public class DirectedGraph {
 			}
 		}
 
-		
+
 		// Recursive case
 		if (max > 0) {
 			for (int i = 0; i < adjMat[startIndex].length;i++) {
