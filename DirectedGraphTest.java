@@ -32,16 +32,34 @@ public class DirectedGraphTest {
 	@Test
 	public void testGetTrips() {
 		DirectedGraph d1 = new DirectedGraph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7");
+		DirectedGraph d2 = new DirectedGraph("AC7, CE4, AE2, CA10, DB9, EB1, DE5, CB3, BA5, EC3");
 		
-		assertTrue(d1.getTrips('C', 'C', 3) == 2);
-		assertTrue(d1.getTrips('D', 'B', 2) == 1);
-		assertTrue(d1.getTrips('D', 'B', 1) == 0);
-		assertTrue(d1.getTrips('A', 'A', 4) == 0);
-		assertTrue(d1.getTrips('D', 'B', 1) == 0);
-		assertTrue(d1.getTrips('B', 'C', 1) == 1);
-		assertTrue(d1.getTrips('B', 'C', 3) == 2);
-		assertTrue(d1.getTrips('B', 'C', 4) == 2);
-		assertTrue(d1.getTrips('B', 'C', 5) == 3);
+		assertTrue(d1.getTrips('C', 'C', 3, true) == 2);
+		assertTrue(d1.getTrips('A', 'C', 4, true) == 6);
+		assertTrue(d1.getTrips('D', 'B', 2, true) == 1);
+		assertTrue(d1.getTrips('D', 'B', 1, true) == 0);
+		assertTrue(d1.getTrips('A', 'A', 4, true) == 0);
+		assertTrue(d1.getTrips('D', 'B', 1, true) == 0);
+		assertTrue(d1.getTrips('B', 'C', 1, true) == 1);
+		assertTrue(d1.getTrips('B', 'C', 2, true) == 1);
+		assertTrue(d1.getTrips('B', 'C', 3, true) == 2);
+		assertTrue(d1.getTrips('B', 'C', 4, true) == 3);
+		assertTrue(d1.getTrips('B', 'C', 5, true) == 5);
+		assertTrue(d2.getTrips('C', 'C', 3, true) == 4);
+		assertTrue(d2.getTrips('D', 'B', 2, true) == 2);
+	}
+	
+	@Test
+	public void testGetTripsExact() {
+		DirectedGraph d1 = new DirectedGraph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7");
+		
+		assertTrue(d1.getTrips('A', 'C', 4, false) == 3);
+		assertTrue(d1.getTrips('D', 'B', 1, false) == 0);
+		assertTrue(d1.getTrips('D', 'B', 2, false) == 1);
+		assertTrue(d1.getTrips('D', 'B', 3, false) == 1);
+		assertTrue(d1.getTrips('D', 'B', 4, false) == 1);
+		assertTrue(d1.getTrips('D', 'B', 5, false) == 2);
+		
 	}
 	
 	
