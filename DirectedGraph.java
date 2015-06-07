@@ -1,6 +1,8 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.PriorityQueue;
+import java.util.Scanner;
 
 /**
  * Various directed graph problems.
@@ -18,7 +20,52 @@ public class DirectedGraph {
 	private static final int INFINITY = 99999;
 	// PriorityQueues require a default initial capacity
 	// when using comparators
-	private static final int QUEUE_INIT = 11; 
+	private static final int QUEUE_INIT = 11;
+	
+	public static void main(String[] args) throws IOException {
+		Scanner inputScanner = new Scanner(System.in);
+		String line = null;
+		
+		// Read input
+		while(!(line = inputScanner.nextLine()).isEmpty()) {
+		  DirectedGraph dg = new DirectedGraph(line);
+		  
+		  // Run questions
+		  System.out.println("1. The distance of the route A-B-C.");
+		  System.out.println(dg.getDistance("A-B-C"));
+		  
+		  System.out.println("2. The distance of the route A-D.");
+		  System.out.println(dg.getDistance("A-D"));
+		  
+		  System.out.println("3. The distance of the route A-D-C.");
+		  System.out.println(dg.getDistance("A-D-C"));
+		  
+		  System.out.println("4. The distance of the route A-E-B-C-D.");
+		  System.out.println(dg.getDistance("A-E-B-C-D"));
+		  
+		  System.out.println("5. The distance of the route A-E-D.");
+		  System.out.println(dg.getDistance("A-E-D"));
+		  
+		  System.out.println("6. The number of trips starting at C and ending at C with a maximum of 3 stops.");
+		  System.out.println(dg.getTrips('C', 'C', 3, true));
+		  
+		  System.out.println("7. The number of trips starting	 at A and ending at C with exactly 4 stops.");
+		  System.out.println(dg.getTrips('A', 'C', 3, false));
+		  
+		  System.out.println("8. The length of the shortest route (in terms of distance to travel) from A to C.");
+		  System.out.println(dg.getShortestRoute('A', 'C'));
+		  
+		  System.out.println("9. The length of the shortest route (in terms of distance to travel) from B to B.");
+		  System.out.println(dg.getShortestRoute('B', 'B'));
+		  
+		  System.out.println("10. The number of different routes from C to C with a distance of less than 30.");
+		  System.out.println(dg.getNumRoutes('C', 'C', 30));
+		  
+		}
+		inputScanner.close();
+		
+		
+	}
 
 	public DirectedGraph(String input) {
 		String[] inputArray = input.split(", ");
@@ -54,7 +101,8 @@ public class DirectedGraph {
 	 * Gets the total distance of a given path
 	 * 
 	 * @param path	input string separated by hyphens
-	 * @return the distance as an integer
+	 * @return the distance as an integer, -1 for
+	 * non-existent routes
 	 */
 	public int getDistance(String path) {
 		String[] pathArray = path.split("-");
